@@ -1,0 +1,448 @@
+I Installation Exist-DB specific pour OJEEP:
+============================================
+
+1. Introduction:
+----------------
+
+Exist-db (http://www.exist-db.org/exist/apps/doc/documentation.xml) est une base documentaire orientee XML.
+Cette base dispose d une interface html supportant les services REST.
+
+Notre version d Exist-db est un pull de la version 2.2 - actuellement branche develop - sur laquelle
+les specificites suivantes ont ete appliquees:
+
+- Correction Exist-db afin de permettre la generation de l installer sur une plateforme Windows (Requete poussee vers le existdb.org)
+- L'export des blancs durs (\xA0) sont forme binaire unicode et non sous forme d entite numerique (Fork du source Exist pour besoin specifique de Fromex)
+- Integration / Correction de l extension native FTP afin de gerer les FTP non natif et de corriger la gestion des exceptions
+- Etendre le module Compression afin de gerer des Zip avec encoding local au lieu de unicode
+- Activation des services REST par annotation (Configuration Module OJEEP)
+- La conservation des blancs dans le PCData Mixed content (Configuration serveur)
+- La taille des buffers de cache en memoire avec tuning des configurations: Memoire max 5120M, Memoire min 1024M, Minimum Disk Space 2048M, Cache size 2048Mm Collection Cache 256M, Check Cache Size Off
+
+
+2. Installation Exist-db:
+-------------------------
+
+  2.1 Installation standard:
+  --------------------------
+
+L'installation standard de Exist-db est detaillee dans les procedures suivantes : 
+
+- Quick start : http://www.exist-db.org/exist/apps/doc/quickstart.xml
+- Installation en mode text et configuration comme un service windows : http://www.exist-db.org/exist/apps/doc/advanced-installation.xml
+- Additional package installation : http://www.exist-db.org/exist/apps/doc/dashboard.xml
+- Administration : http://www.exist-db.org/exist/apps/doc/
+- Mise a jour : http://www.exist-db.org/exist/apps/doc/upgrading.xml
+
+Cette version de exist-db exporte les non-breaking-space sous forme de &#160; au lieu de \{160}.
+Je suppose que ce feature permet une integration plus aisee avec les editeurs in-line HTML/XML
+
+
+  2.2 Modification d Exist-db specifique a l'IC:
+  ----------------------------------------------
+
+Afin de recreer l'application, il faut installer au prealable GIT/GitHub for Windows, JAVA SDK 1.7 et IzPack (cd Annexes)
+
+Afin de regenerer l application a partir des sources, il faut utiliser la procedure d'installation https suivante
+
+http://www.exist-db.org/exist/apps/doc/building.xml#GitHub
+
+et la procedure d acces aux sources Git branche 2.2 - actuellement la branche develop.
+
+https://github.com/eXist-db/exist/blob/develop/README.md
+
+
+Afin de s integrer au projet Open Source, les adapatations de la base de code doit suivre les recommandations de existdb (https://github.com/eXist-db/exist#contributing-to-exist).
+Le code source de l application est hostee sur GitHub, le workflow gestion des releases utilise l approche gitflow.
+Cet approche est automatise grace a l extension GitFlow de AVH. Cette extension doit etre installee dans GIT/GitHub for Windows.
+Cette extension est un wrapper automatisant des commandes git sans les denaturer.
+
+Pour des raisons de facilte, il est utile d utilser TortoiseGit pour disposer des commandes Git dans l explorer. Afin de fonctionner,
+TortoiseGit doit avoir acces aux commandes git. Comme les commandes installees par GIT/GitHub for Windows, ne sont pas visibles, 
+il faut aussi installer Windows Git et le patcher avec GitFlow.
+
+Installations:
+- Download https://windows.github.com/ et installation de GitHub for Windows (https://help.github.com/articles/getting-started-with-github-for-windows/)
+- Download http://msysgit.github.io/ et installation de Git for Windows (https://github.com/msysgit/msysgit/wiki)
+- Download https://code.google.com/p/tortoisegit/, installation de TortoisGit (https://code.google.com/p/tortoisegit/wiki/SetupHowTo)
+- Download http://bit.ly/T5ZMHE et installation de GitFlow for Windows (https://github.com/petervanderdoes/gitflow/wiki/Installing-on-Windows)
+- Application des patchs GitFlow sur Git for Windows (https://github.com/petervanderdoes/gitflow/wiki/Installing-on-Windows#download-that-doesnt-allow-the-hacking)
+- Application des patchs GitFlow sur GitHub for Windows (https://github.com/petervanderdoes/gitflow/wiki/Installing-on-Windows#github-for-windows). 
+  En creant un github powershell et en y demarrant l application cmd, le shell resultant permet avec la commande where git.exe de localiser le repertoire a patcher.
+
+Setup:
+- Creation d un compte sous GitHub pour un username avec un password afin de pousser des demandes de patch vers upstream.
+- Setup de Git (https://help.github.com/articles/set-up-git)
+- Setup de Tortoise pour utiliser le compte et l email configure sous GitHub.
+
+Tests:
+- Shell Github for Windows dispose des commandes git:
+** Creation d un shell Github for Windows et execution reussie de : git --version
+- Shell Git for Windows dispose des commandes git:
+** Creation d un shell bash Git for Windows et execution reussie de : git --version
+- TortoiseGit operationel:
+** Explorer les sources du clone de gitflow installe lors de la procedure d'installation de GitFlow for Windows : Dans le repertoire source acceder a TotrtoiseGit / repo-browser dans le menu contextuel
+- GitFlow for Windows operationel:
+** Creation d un shell Github for Windows et execution reussie de : git flow --version
+** Creation d un shell bash Git for Windows et execution reussie de : git flow --version
+
+Developpement d add-on sur existdb (https://github.com/eXist-db/exist):
+- Login sur le compte GitHub
+
+- Fork du repository exist (https://help.github.com/articles/fork-a-repo/)
+** Acces a la page https://github.com/eXist-db/exist
+** Clicquer sur l icone Fork proposant de forker le repository sur votre compte
+** Recuperer le lien https clone URL vers le repository origin de votre clone du repository upstream par exemple https://github.com/pcolot01/exist.git
+** Demarrer shell Github for Windows et se positionner dans le repertoire des projets 
+** Obtenir un clone local du projet
+**** git clone https://github.com/pcolot01/exist.git
+** Se positionner dans le projet exist
+**** cd exist
+** Identifier le canal upstream 
+**** git remote add upstream https://github.com/eXist-db/exist.git
+** Verifier les canaux: 
+**** git remote -v
+** Etendre le projet afin de supporter gitflow
+**** git flow init
+**** 
+**** Which branch should be used for bringing forth production releases?
+****    - develop
+**** Branch name for production releases: [] master
+**** 
+**** Which branch should be used for integration of the "next release"?
+****    - develop
+**** Branch name for "next release" development: [develop] 
+**** 
+**** How to name your supporting branch prefixes?
+**** Feature branches? [feature/] 
+**** Release branches? [release/] 
+**** Hotfix branches? [hotfix/] 
+**** Support branches? [support/] 
+**** Version tag prefix? [] eXist-
+**** Hooks and filters directory? [.git/hooks]
+
+- Sync du Fork a partir du canal upstream et pour la branche master
+** Demarrer shell Github for Windows et se positionner dans le repertoire des projets 
+** Se positionner dans le projet exist
+**** cd exist
+** Obtenir une copie des modifications realisees par upstream
+**** git fetch upstream
+** Integrer les modifications du master sur la branche master locale
+**** git checkout master
+**** git merge upstream/master
+
+  Gestion des Add-on. Le principe est de creer des features GitFlow comme des corrections sur la branche develop originale.
+De cette maniere tous les features sont independants. Il ne faut donc jamais directement ou indirectement committer sur develop
+via la commande git commit ou git finish feature avec comme branche de base develop. Idem pour master qui represente l etat
+de l upstream.
+  Les patchs sont crees et testes indepedemment comme des features. Ils sont publies dans notre clone GitHub afin d etre publiquement visible.
+Les patchs utiles a la communaute sont proposes upstream via le pull request. Notre version specifique de eXist est integree au sein
+d une preparation de release.
+
+- Pour chaque creation d un patch sur develop et pour les publier sur GitHub local 
+** Se positionner dans le projet exist
+**** cd exist
+** Se positionner sur la branche develop
+**** git checkout develop
+** Creer le feature WindowsBuildCorrection
+**** git flow feature start WindowsBuildCorrection
+** Ajouter, modifier, supprimmer des files, tester et commiter en local
+**** git status
+**** git add files
+**** git rm files
+**** git commit -m "Comment"
+** Eventuellement des cyles ajouter, modifier, supprimmer des files, tester et completer commit en local
+**** git status
+**** git add files
+**** git rm files
+**** git commit --amend -m "Comment"
+** Publier sur le repository origin de GitHub le feature
+**** git flow feature publish WindowsBuildCorrection
+** Se positionner sur la branche develop
+**** git checkout develop
+
+- Creation d un pull request vers upstream (https://help.github.com/articles/using-pull-requests/)
+** Login sur le compte GitHub
+** Selectionner le repository exist (par ex: https://github.com/pcolot01/exist)
+** Choisir la branche feature/WindowsBuildCorrection
+** Cliquet sur l icone verte Compare, review, create a pull request
+** Verifier que le contenu des commits a pousser correspond au corrections souhaitees
+** Cliquet sur l icone verte Create pull request
+** Revoir le commentaires et les corrections
+** Cliquet sur l icone verte Create pull request pour finaliser la requete
+
+
+- Integration des features au sein d un release 
+** Se positionner dans le projet exist
+**** cd exist
+** Se positionner sur la branche develop
+**** git checkout develop
+** Creer le release eXist-2.2-Dev.RC1
+**** git flow release start eXist-2.2-Dev.RC1
+** edite build.properties et met a jour le numero de release textuel 2.2-Dev.RC1 et numerique 2.2.0
+**** git checkout eXist-2.2-Dev.RC1
+**** edit build.properties
+**** git add build.properties
+**** git commit -m "Bump release number"
+** Publication du release pour permettre le travail collaboratif
+**** git flow release publish eXist-2.2-Dev.RC1
+** Merging Features in Release
+**** git merge feature/WindowsBuildCorrection
+**** git merge feature/XmlSerializeNbspNumericalEntityAsBinaryUnicode160
+
+
+
+
+
+
+  2.3 Recompilation de l application depuis les sources
+  -----------------------------------------------------
+
+Apres telechargement des sources et patch :
+
+Definir la variable d environement JAVA_HOME vers un SDK 1.7+ 
+ex: set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_60
+
+et utiliser le PATH pou pointer vers la bonne version de java
+
+Definir la variable d environement EXIST_HOME vers le repertoire d installation de eXist
+ex: set EXIST_HOME=C:\Projets\exist
+
+Creer un fichier local.build.properties a la racine avec les proprietes locales
+ex: izpack.dir = /Program Files (x86)/IzPack
+
+
+cd exist
+.\build.bat clean
+.\build.bat 
+.\build.bat installer
+.\build.bat -f build\scripts\jarsigner.xml jnlp-pack200
+
+Pour une execuion par jnlp de l applet admin, il faut truster le site au niveau du panneau de configuration java.
+A partir de java 8, il faut un niveau de securite High ou Very High. Pour les certificats self signed, il faut ajouter
+le protocol://site:port dans la liste des sites trustes
+
+
+3. Deployment:
+--------------
+
+Vu la limitation de longueur des noms de repertoire sous Windows, il est preferable de faire l installation le plus pret d une racine de disque.
+
+Definir la variable d environement JAVA_HOME vers un SDK 1.7+ 
+ex: set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_60
+
+Definir la variable d environement EXIST_HOME vers le repertoire d installation de eXist
+ex: set EXIST_HOME=C:\eXist-db2.2
+
+Afin d installer, il faut executer:  
+
+"%JAVA_HOME%\bin\java" -jar .\installer\eXist-db-setup-2.2-develop-00b8557.jar
+password: admin
+max memory 5120
+max cache 1024
+all applications (demo has dependencies to xqjson, markdown, xsltform, betterform
+
+Si l'application existe deja, elle est remplacee.
+Si le repertoire Web de stockage des donnees existe deja:
+- le contenu est conserve
+- les upgrades et nouvelles applications ne sont pas installees automatiquement mais uniquement manuellement via le package manager
+- le redemarrage automatique de l application echoue car l authentification n est pas reconnue
+
+
+ShortCut et menu doivent etre adapte si la version courante de java n est pas celle a utiliser.
+
+Repertoire courant : c:\eXist-db2.2
+Commande : "C:\Program Files\Java\jdk1.7.0_60\bin\java.exe" -jar start.jar
+
+
+
+
+4. Demarrage/arret de l'application
+-----------------------------------
+
+  4.1 Demarrage/arret via l'interface graphique
+  ----------------------------------------------
+Definir la variable d environement JAVA_HOME vers un SDK 1.7+ 
+ex: set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_60
+
+Les parametres minimum et maximum de la vm sont sauvés dans vm.properties
+
+//a tester
+Dans conf.xml, les parametres de caches peucent etre tune pour 6Gb de memoire centrale:
+cacheSize="3072M" au lieu de 256M 
+checkMaxCacheSize="false" au lieu de true
+collectionCache="512M" au lieu de 48M 
+files="..." le stockage des donnees
+journal-dir="..." le stockage des journaux de preference sur 2 disques locaux independants
+
+
+la commande de demarrage est
+
+"%JAVA_HOME%\bin\java" -jar .\start.jar
+
+l arret est realise depuis le menu contextuel de l application
+
+
+  4.2 Demarrage/arret via l'interface headless
+  ----------------------------------------------
+Definir la variable d environement JAVA_HOME vers un SDK 1.7+ 
+ex: set JAVA_HOME=C:\Program Files\Java\jdk1.7.0_60
+
+Les parametres minimum et maximum de la vm sont sauvés dans les fichiers .\bin\startup.bat et .\bin\shutdown.bat
+
+la commande de demarrage est
+
+.\bin\startup.bat
+
+l arret est realise depuis le menu contextuel de l application
+
+.\bin\shutdown.bat -u admin -p admin
+
+
+5. Configurations:
+------------------
+  5.1 Installation de packages complementaires
+  --------------------------------------------
+  
+  Demarrer l application Package Manager et installer l application de monitoring monex.
+??? functx
+
+???  Retirer les applications
+  
+  
+  5.2 Reconstruction de l index sur les fonctions Xql disponible
+  ---------------------------------------------------------------
+  
+  Demarrer l application XQuery fonction documentation, activer generate en logger vous.
+  
+6. Tuning:
+----------
+
+Quelques articles
+ http://docs.oracle.com/javase/6/docs/technotes/guides/management/jconsole.html
+ http://docs.oracle.com/javase/6/docs/technotes/tools/share/jvisualvm.html
+ http://docs.oracle.com/javase/8/docs/technotes/tools/windows/jcmd.html
+ http://docs.oracle.com/javase/6/docs/technotes/tools/share/jmap.html
+ https://www.ej-technologies.com/products/jprofiler/overview.html
+ http://www.prosysopc.com/blog/using-java-mission-control-for-performance-monitoring/
+ 
+
+  6.1 JMX Console
+  ---------------
+Activer le controle JMX a distance ou instrumentaliser en local
+
+Demarrer %JAVA_HOME%\bin\jconsole.exe
+  Connect to local connection: start.jar org.exist.launcher.Launcher
+
+  
+  6.2 VisualVM
+  ------------
+
+Demarrer %JAVA_HOME%\bin\jvisualvm.exe
+
+
+  6.3 Java Mission Control
+  -------------------------
+
+Cet outil necessite une licence pour un usage en production
+  
+Demarrer l application instrumentalisee avec les options java suivante ajoutee a JAVA_OPTS ou vm.properties -XX:+UnlockCommercialFeatures -XX:+FlightRecorder
+  
+Demarrer %JAVA_HOME%\bin\jmc.exe
+
+
+
+
+
+
+II Appel aux web-services de OJEEP:
+===================================
+
+Afin de faciliter la lisibilite, les services sont declares sous forme d annotation dans les xquery.
+
+Une description complete de cette approche est disponible sous : http://www.adamretter.org.uk/presentations/restxq_mugl_20120308.pdf
+et http://adamretter.org.uk/papers/restful-xquery_january-2012.pdf
+
+LEs service sont deployes sous :
+
+http://as-opo-04:8080/exist/restxq/{path}?{params}
+
+
+
+
+
+
+Annex A
+=======
+
+A.1 Installation de GIT
+-----------------------
+
+Sous windows, git est distribue 
+
+
+avec un integration windows : http://msysgit.github.io/
+avec un helper explorer : https://code.google.com/p/tortoisegit/
+avec un interface web sous : https://windows.github.com/
+
+Il faut telecharger et installer les fichiers .exe
+
+
+A.2 Installation de JAVA SDK 1.7
+---------------------------------
+
+Sous windows, installer Oracle java JDK 1.7.0.60 depuis  http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+
+et forcer son usage en definissant la variable d environnement JAVA_HOME sur C:\Program Files\Java\jdk1.7.0_60
+
+A.2 Installation de Izpack
+---------------------------------
+
+Sous windows, installer IzPack 4.3.5 depuis http://izpack.org/
+
+Il faut telecharger et installer le fichier .exe de 18.7 MB
+
+
+
+
+================================================================================================
+
+x Never used on Windows : Check %{MAX_MEMORY} in bin\functions.d\eXist-settings.sh
+x Never used because JAVA_HOME is defined : Check $JDKPath in bin\startup.bat, bin\shutdown.bat, bin\server.bat, bin\client.bat, bin\backup.bat
+
+x Test version precedente
+
+x Archive current migration
+x Migration vers JDK 1.8
+x Rebuild repository from scratch
+x Redeploy on empty existing version
+- Diff Archive
+
+- Add  C:\Projets\exist\webapp\WEB-INF\log4j.xml to suppres betterform Warning (evenif betterform not installed !?)
+
+
+
+- FTP test server /TestData/01-FTP_from_PO/02-pre-press/20140602/  or 
+
+
+ZIP compress using encoding
+Test Zip
+
+Configuration taille buffer adaptee OJEEP
+
+
+as-opo-01 
+<db-connection cacheSize="384" checkMaxCacheSize="true" collectionCache="144" database="native" 
+		files="D:\Java\SERVERs\eXist-db\webapp\WEB-INF\data" pageSize="4096" nodesBuffer="1000" cacheShrinkThreshold="10000" 
+		doc-ids="default" minDiskSpace="128M">
+<!--module uri="http://exist-db.org/xquery/cache"              class="org.exist.xquery.modules.cache.CacheModule" /-->
+<!--module uri="http://exist-db.org/xquery/context"            class="org.exist.xquery.modules.context.ContextModule" /-->
+               <xupdate allowed-fragmentation="100" enable-consistency-checks="no"/>         
+		
+as-opo-04 
+    <db-connection cacheSize="384M" checkMaxCacheSize="true" collectionCache="48M" database="native"
+        files="d:\eXist\webapp\WEB-INF\data" pageSize="4096" nodesBuffer="1000" cacheShrinkThreshold="10000"
+        doc-ids="default" minDiskSpace="128M">
+    <indexer caseSensitive="yes" index-depth="5" preserve-whitespace-mixed-content="yes"
+        stemming="no" suppress-whitespace="none"
+        tokenizer="org.exist.storage.analysis.SimpleTokenizer" track-term-freq="yes">
+
