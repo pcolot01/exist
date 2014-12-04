@@ -55,7 +55,7 @@ public class GetDirListFunction extends BasicFunction {
             String remoteDirectory = args[1].getStringValue();
             
             result = list(ftp, remoteDirectory);
-        
+			log.warn("FTP server list directory from " + remoteDirectory);
         }
         
         return result;

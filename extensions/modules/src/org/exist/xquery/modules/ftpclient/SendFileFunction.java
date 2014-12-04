@@ -63,7 +63,7 @@ public class SendFileFunction extends BasicFunction {
             BinaryValue data = (BinaryValue)args[3].itemAt(0);
             
             result = sendBinaryFile(ftp, remoteDirectory, fileName, data);
-        
+			log.warn("FTP server send binary File: " + fileName + " from " + remoteDirectory);
         }
         
         return result;

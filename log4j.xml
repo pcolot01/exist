@@ -126,7 +126,16 @@
         </layout>
     </appender>
     -->
-       
+
+    <appender name="exist.ftp" class="org.apache.log4j.RollingFileAppender">
+        <param  name="File" value="${exist.home}/webapp/WEB-INF/logs/ftp.log"/>
+        <param name="MaxFileSize" value="5MB"/>
+        <layout class="org.apache.log4j.PatternLayout">
+        <param name="ConversionPattern" value="%d [%t] %-5p (%F [%M]:%L) - %m %n"/>
+        </layout>
+    </appender>
+
+	
     <!-- the null appender writes to no where -->
     <appender name="null" class="org.apache.log4j.varia.NullAppender">
         <layout class="org.apache.log4j.PatternLayout">
@@ -202,7 +211,12 @@
         <priority value="info"/>
         <appender-ref ref="exist.restxq"/>
     </category>    
-        
+
+    <category name="org.exist.xquery.modules.ftpclient" additivity="false">
+        <priority value="warn"/>
+        <appender-ref ref="exist.ftp"/>
+    </category>    
+	
     <!-- Logging 3rd party libraries -->
   
     <category name="org.eclipse.jetty" additivity="false">

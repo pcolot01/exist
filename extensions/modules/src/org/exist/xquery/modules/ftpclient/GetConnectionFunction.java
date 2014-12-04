@@ -2,6 +2,7 @@ package org.exist.xquery.modules.ftpclient;
 
 import java.io.IOException;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
 import org.exist.dom.QName;
@@ -79,31 +80,88 @@ public class GetConnectionFunction extends BasicFunction {
 
         final FTPClient ftp = new FTPClient();
         try {
+		    FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
+			ftp.configure(conf);
+			
             ftp.connect(host);
-
-            log.debug("Connected to: " + host + ". " + ftp.getReplyString());
+            log.warn("Connecting to: " + host + "." );
+            log.debug(ftp.getReplyString());
 
             // After connection attempt, you should check the reply code to verify
             // success.
             int reply = ftp.getReplyCode();
 
             if(!FTPReply.isPositiveCompletion(reply)) {
-                ftp.disconnect();
-                log.warn("FTP server refused connection.");
+                log.error("FTP server refused connection.");
+				
+				getDisconnection(ftp);
+					
             } else {
-                // store the Connection and return the uid handle of the Connection
-                result = new IntegerValue(FTPClientModule.storeConnection(context, ftp));
+                log.warn("FTP server accepted connection.");
+
+				ftp.login(username, password);
+                log.warn("Login as: " + username + ".");
+                log.debug(ftp.getReplyString());
+
+				reply = ftp.getReplyCode();
+
+				if(!FTPReply.isPositiveCompletion(reply)) {
+					log.error("FTP server failed log in.");		
+					getDisconnection(ftp);
+				} else {
+					log.warn("Logged.");
+					// store the Connection and return the uid handle of the Connection
+					result = new IntegerValue(FTPClientModule.storeConnection(context, ftp));
+				}
             }
         } catch(IOException se) {
-            if(ftp.isConnected()) {
-                try {
-                    ftp.disconnect();
-                } catch(IOException ioe) {
-                    log.error(ioe.getMessage(), ioe);
-                }
-            }
-        }
+            log.error("Exception during GetConnectionFunction " + se.getMessage(), se);
+		
+            getLogoutAndDisconnection(ftp);
+		}
             
         return result;
+    }
+	
+    /**
+     * log out and disconnect from the ftp connection.
+     *
+     * @param   ftp             ftp handle 
+     *
+     */
+	public final static void getLogoutAndDisconnection(FTPClient ftp) {
+		try {
+			// Log out from the Connection
+			ftp.logout();
+			log.warn("FTP server log out.");
+            log.debug(ftp.getReplyString());
+		} catch(IOException ioe) {
+			log.error("FTP server failed log out.");		
+			log.error(ioe.getMessage(), ioe);
+		} finally {
+			getDisconnection(ftp);
+		}
+    }
+	
+	
+	/**
+     * disconnect from the ftp connection.
+     *
+     * @param   ftp             ftp handle 
+     *
+     */
+	private final static void getDisconnection(FTPClient ftp) {       
+		try {
+			if(ftp.isConnected()) {
+				ftp.disconnect();
+				log.warn("FTP server disconnected.");
+			} else {
+				log.warn("FTP server not connected.");
+			}
+		} catch(IOException ioe) {
+			log.error("FTP server failed disconnect.");		
+			log.error(ioe.getMessage(), ioe);
+            log.debug(ftp.getReplyString());
+		}
     }
 }
