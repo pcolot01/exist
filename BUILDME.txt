@@ -191,9 +191,15 @@ d une preparation de release.
 **** git merge feature/WindowsBuildCorrection
 **** git merge feature/XmlSerializeNbspNumericalEntityAsBinaryUnicode160
 
+- Integration de pull request merge directement dans le clone GitHub depuis le upstream
+** Login sur le compte GitHub
+** Selectionner le repository exist (par ex: https://github.com/pcolot01/exist)
+** Clicquer sur compare, inverser les bases et creer un pull request
+** Selectionner le pull request et clicquer sur le bouton merge
 
-
-
+- Integrer localement les merges du clone
+**** git pull
+** En selectionnant avec le GitHub for windows, les branches sont automatique reenregistree localement et visible dans git branch -a
 
 
   2.3 Recompilation de l application depuis les sources
