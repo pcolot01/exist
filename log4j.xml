@@ -117,7 +117,6 @@
         </layout>
     </appender>
     
-    <!--
     <appender name="exist.statistics" class="org.apache.log4j.RollingFileAppender">
         <param  name="File" value="${exist.home}/webapp/WEB-INF/logs/statistics.log"/>
         <param name="MaxFileSize" value="5MB"/>
@@ -125,7 +124,6 @@
         <param name="ConversionPattern" value="%d [%t] %-5p (%F [%M]:%L) - %m %n"/>
         </layout>
     </appender>
-    -->
 
     <appender name="exist.ftp" class="org.apache.log4j.RollingFileAppender">
         <param  name="File" value="${exist.home}/webapp/WEB-INF/logs/ftp.log"/>
@@ -135,7 +133,6 @@
         </layout>
     </appender>
 
-	
     <!-- the null appender writes to no where -->
     <appender name="null" class="org.apache.log4j.varia.NullAppender">
         <layout class="org.apache.log4j.PatternLayout">
@@ -174,11 +171,8 @@
     </category>
     
     <category name="org.exist.statistics" additivity="false">
-        <priority value="debug"/>
-        <appender-ref ref="exist.core"/>
-		<!-- 
+        <priority value="warn"/>
 		<appender-ref ref="exist.statistics"/> 
-		-->
     </category>
     
     <category name="org.exist.backup.SystemExport" additivity="false">
@@ -253,7 +247,7 @@
     </category>
 
 	<category name="org.exist.storage.SystemTask" additivity="false">
-		<priority value="debug"/>
+		<priority value="warn"/>
 		<appender-ref ref="exist.scheduler"/>
 	</category>
 
