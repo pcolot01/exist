@@ -58,9 +58,9 @@ public class ConfigurationDialog extends JDialog {
             Logger.getLogger(ConfigurationDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        final String maxMemProp = vmProperties.getProperty("memory.max", "1024");
+        final String maxMemProp = vmProperties.getProperty("memory.max", "5120");
         maxMemory.setValue(new Integer(maxMemProp));
-        final String minMemProp = vmProperties.getProperty("memory.min", "64");
+        final String minMemProp = vmProperties.getProperty("memory.min", "1024");
         minMemory.setValue(new Integer(minMemProp));
         
         checkCacheBoundaries();
