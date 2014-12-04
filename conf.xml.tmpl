@@ -154,9 +154,9 @@
         you have some more memory to waste. If you deal with lots of 
         collections, you can also increase the collectionCacheSize value 
     -->
-    <db-connection cacheSize="@cacheSize@M" checkMaxCacheSize="true" collectionCache="64M" database="@database@"
+    <db-connection cacheSize="@cacheSize@M" checkMaxCacheSize="false" collectionCache="256M" database="@database@"
         files="@dataDir@" pageSize="4096" nodesBuffer="1000" cacheShrinkThreshold="10000"
-        doc-ids="default" minDiskSpace="128M">
+        doc-ids="default" minDiskSpace="2048M">
 
         <!--
             Startup Triggers are executed before the database becomes generally available
@@ -400,7 +400,7 @@
             Changing the parameter will only have an effect on newly loaded 
             files, not old ones.
         
-        - suppress-whitespace-mixed-content:
+        - preserve-whitespace-mixed-content:
             preserve the white space inside a mixed content node
         
         - tokenizer:
@@ -411,7 +411,7 @@
         - track-term-freq:
             not documented.
     -->
-    <indexer caseSensitive="yes" index-depth="5" preserve-whitespace-mixed-content="no"
+    <indexer caseSensitive="yes" index-depth="5" preserve-whitespace-mixed-content="yes"
         stemming="no" suppress-whitespace="none"
         tokenizer="org.exist.storage.analysis.SimpleTokenizer" track-term-freq="yes">
 
