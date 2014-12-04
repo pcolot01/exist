@@ -118,22 +118,9 @@ public class FTPClientModule extends AbstractInternalModule {
             @Override
             public void modify(Entry<Long, FTPClient> entry) {
             
-                final FTPClient con = entry.getValue();
+                final FTPClient ftp = entry.getValue();
                 
-                try {
-                    // close the Connection
-                    con.logout();
-                } catch(IOException ioe) {
-                    log.error(ioe.getMessage(), ioe);
-                } finally {
-                    if(con.isConnected()) {
-                        try {
-                            con.disconnect();
-                        } catch(IOException ioe) {
-                            log.error(ioe.getMessage(), ioe);
-                        }
-                    }
-                }
+				GetConnectionFunction.getLogoutAndDisconnection(ftp);
             }
         });
 

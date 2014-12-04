@@ -59,7 +59,7 @@ public class GetFileFunction extends BasicFunction {
             String fileName = args[2].getStringValue();
             
             result = getBinaryFile(ftp, remoteDirectory, fileName);
-        
+			log.warn("FTP server get binary File: " + fileName + " from " + remoteDirectory);
         }
         
         return result;
