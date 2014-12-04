@@ -145,6 +145,8 @@ d une preparation de release.
 **** git checkout develop
 ** Creer le feature WindowsBuildCorrection
 **** git flow feature start WindowsBuildCorrection
+** Se repositionner sur la branche WindowsBuildCorrection
+**** git checkout WindowsBuildCorrection
 ** Ajouter, modifier, supprimmer des files, tester et commiter en local
 **** git status
 **** git add files
