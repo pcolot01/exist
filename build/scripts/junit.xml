@@ -22,6 +22,9 @@
         </fileset>
     </path>
 
+    <target name="test-comp"
+        depends="test-prepare, test-comp-ic"
+            description="Run jUnit tests"/>
 
     <target name="test"
         depends="test-prepare, test-local, test-extensions, test-jetty, test-concurrent, test-remote, test-recovery, test-wrapup, test-ant"
@@ -596,5 +599,32 @@
     
     <!-- Build and test for travis service -->
     <target name="travis" depends="clean,clean-all,all,test-prepare,test-local,test-wrapup"/>
-        
+
+   <!-- Test set 1 : local database instance -->
+    <target name="test-comp-ic">
+        <echo message="-----------------------------------------------------"/>
+        <echo message="Running test compression on a local database instance"/>
+        <echo message="-----------------------------------------------------"/>
+
+        <junit haltonfailure="false" printsummary="yes" showoutput="${junit.output}" 
+            maxmemory="${junit.forked.VM.maxmemory}">
+            <sysproperty key="exist.home" value="${basedir}" />
+	    <!-- local database, so should not be needed. /ljo -->
+            <sysproperty key="jetty.port" value="${jetty.port}" />
+            <sysproperty key="jetty.port.ssl" value="${jetty.port.ssl}" />
+            <classpath refid="classpath.core"/>
+            <classpath refid="classpath.jetty"/>
+            <classpath refid="classpath.aspectj"/>
+            <classpath refid="classpath.junit"/>
+            <classpath refid="classpath.test-libs"/>
+            
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+
+            <!-- xquery smoke tests //-->
+            <test fork="yes" name="xquery.modules.compression.CompressionTests" todir="${junit.reports.dat}"/>
+
+            <!-- Execute all other tests except those that have to be called manually.   -->
+        </junit>
+    </target>	
 </project>
