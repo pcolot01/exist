@@ -25,8 +25,9 @@ function uz:setup() {
     return (
         sm:chmod(xs:anyURI($coll), "rwxrwxrwx"),
         xmldb:store($uz:collection, $uz:myFile-name, util:parse($uz:myFile-serialized))
+		(:
         xmldb:store($uz:collection, $uz:myFileZip-name, $uz:myStaticContentBase64)
-		
+		:)
     )
 };
 
