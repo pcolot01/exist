@@ -61,14 +61,14 @@ public class RenameFileFunction extends BasicFunction {
             String orgFileName = args[2].getStringValue();
 			String newFileName = args[3].getStringValue();
             
-            result = deleteBinaryFile(ftp, remoteDirectory, orgFileName, newFileName);
+            result = renameFile(ftp, remoteDirectory, orgFileName, newFileName);
 			log.info("FTP server rename binary File: from " + orgFileName + " to "  +newFileName + " in dir " + remoteDirectory);
         }
         
         return result;
     }
 
-    private Sequence deleteBinaryFile(FTPClient ftp, String remoteDirectory, String orgFileName, String newFileName) {
+    private Sequence renameFile(FTPClient ftp, String remoteDirectory, String orgFileName, String newFileName) {
         
         boolean result = false;
         try {
