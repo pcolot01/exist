@@ -35,7 +35,8 @@ public class FTPClientModule extends AbstractInternalModule {
         new FunctionDef(SendFileFunction.signature, SendFileFunction.class),
         new FunctionDef(GetFileFunction.signature, GetFileFunction.class),
 		new FunctionDef(DeleteFileFunction.signature, DeleteFileFunction.class),
-		new FunctionDef(RenameFileFunction.signature, RenameFileFunction.class)
+		new FunctionDef(RenameFileFunction.signature, RenameFileFunction.class),
+		new FunctionDef(RemoveDirectoryFunction.signature, RemoveDirectoryFunction.class)
     };
 
     public FTPClientModule(Map<String, List<? extends Object>> parameters) {
