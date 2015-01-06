@@ -31,7 +31,7 @@ public class RenameFileFunction extends BasicFunction {
     private static final FunctionParameterSequenceType FILE_NAME_FROM_PARAM = new FunctionParameterSequenceType("file-name-old", Type.STRING, Cardinality.EXACTLY_ONE, "Origin File name");
     private static final FunctionParameterSequenceType FILE_NAME_TO_PARAM = new FunctionParameterSequenceType("file-name-new", Type.STRING, Cardinality.EXACTLY_ONE, "New File name" );
     
-    private static final Logger log = Logger.getLogger(SendFileFunction.class);
+    private static final Logger log = Logger.getLogger(RenameFileFunction.class);
     
     public final static FunctionSignature signature = new FunctionSignature(
         new QName("rename-file", FTPClientModule.NAMESPACE_URI, FTPClientModule.PREFIX),

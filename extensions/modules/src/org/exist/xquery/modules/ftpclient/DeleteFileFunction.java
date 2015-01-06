@@ -30,7 +30,7 @@ public class DeleteFileFunction extends BasicFunction {
     private static final FunctionParameterSequenceType REMOTE_DIRECTORY_PARAM = new FunctionParameterSequenceType("remote-directory", Type.STRING, Cardinality.EXACTLY_ONE, "The remote directory");
     private static final FunctionParameterSequenceType FILE_NAME_PARAM = new FunctionParameterSequenceType("file-name", Type.STRING, Cardinality.EXACTLY_ONE, "File name");
     
-    private static final Logger log = Logger.getLogger(SendFileFunction.class);
+    private static final Logger log = Logger.getLogger(DeleteFileFunction.class);
     
     public final static FunctionSignature signature = new FunctionSignature(
         new QName("delete-file", FTPClientModule.NAMESPACE_URI, FTPClientModule.PREFIX),
