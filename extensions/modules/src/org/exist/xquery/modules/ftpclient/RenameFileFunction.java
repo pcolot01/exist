@@ -24,26 +24,28 @@ import org.exist.xquery.value.IntegerValue;
  *
  * 
  */
-public class DeleteFileFunction extends BasicFunction {
+public class RenameFileFunction extends BasicFunction {
 
     private static final FunctionParameterSequenceType CONNECTION_HANDLE_PARAM = new FunctionParameterSequenceType("connection-handle", Type.LONG, Cardinality.EXACTLY_ONE, "The connection handle");
     private static final FunctionParameterSequenceType REMOTE_DIRECTORY_PARAM = new FunctionParameterSequenceType("remote-directory", Type.STRING, Cardinality.EXACTLY_ONE, "The remote directory");
-    private static final FunctionParameterSequenceType FILE_NAME_PARAM = new FunctionParameterSequenceType("file-name", Type.STRING, Cardinality.EXACTLY_ONE, "File name");
+    private static final FunctionParameterSequenceType FILE_NAME_FROM_PARAM = new FunctionParameterSequenceType("file-name-old", Type.STRING, Cardinality.EXACTLY_ONE, "Origin File name");
+    private static final FunctionParameterSequenceType FILE_NAME_TO_PARAM = new FunctionParameterSequenceType("file-name-new", Type.STRING, Cardinality.EXACTLY_ONE, "New File name" );
     
     private static final Logger log = Logger.getLogger(SendFileFunction.class);
     
     public final static FunctionSignature signature = new FunctionSignature(
-        new QName("delete-file", FTPClientModule.NAMESPACE_URI, FTPClientModule.PREFIX),
-        "Delete file via FTP.",
+        new QName("rename-file", FTPClientModule.NAMESPACE_URI, FTPClientModule.PREFIX),
+        "Rename file via FTP.",
         new SequenceType[] {
             CONNECTION_HANDLE_PARAM,
             REMOTE_DIRECTORY_PARAM,
-            FILE_NAME_PARAM
+            FILE_NAME_FROM_PARAM,
+			FILE_NAME_TO_PARAM
         },
-        new FunctionReturnSequenceType(Type.BOOLEAN, Cardinality.EXACTLY_ONE, "true or false indicating the success of the file deleted")
+        new FunctionReturnSequenceType(Type.BOOLEAN, Cardinality.EXACTLY_ONE, "true or false indicating the success of the file rename")
     );
 
-    public DeleteFileFunction(XQueryContext context) {
+    public RenameFileFunction(XQueryContext context) {
         super(context, signature);
     }
 
@@ -56,16 +58,17 @@ public class DeleteFileFunction extends BasicFunction {
         FTPClient ftp = FTPClientModule.retrieveConnection(context, connectionUID);
         if(ftp != null) {
             String remoteDirectory = args[1].getStringValue();
-            String fileName = args[2].getStringValue();
+            String orgFileName = args[2].getStringValue();
+			String newFileName = args[3].getStringValue();
             
-            result = deleteBinaryFile(ftp, remoteDirectory, fileName);
-			log.warn("FTP server delete binary File: " + fileName + " from " + remoteDirectory);
+            result = deleteBinaryFile(ftp, remoteDirectory, orgFileName, newFileName);
+			log.info("FTP server rename binary File: from " + orgFileName + " to "  +newFileName + " in dir " + remoteDirectory);
         }
         
         return result;
     }
 
-    private Sequence deleteBinaryFile(FTPClient ftp, String remoteDirectory, String fileName) {
+    private Sequence deleteBinaryFile(FTPClient ftp, String remoteDirectory, String orgFileName, String newFileName) {
         
         boolean result = false;
         try {
@@ -73,12 +76,15 @@ public class DeleteFileFunction extends BasicFunction {
 			if ( cdResult ) {
 				ftp.setFileType(FTP.BINARY_FILE_TYPE);
 				//try deleting remote file
-				result = ftp.deleteFile(fileName);
+				result = ftp.rename(orgFileName, newFileName);
+				String messageOut = "FTP server rename binary File: from " + orgFileName + " to "  +newFileName + " in dir " + remoteDirectory + ". Message: " + ftp.getReplyString();
 				if (!result) {
-					log.error("FTP server unable to delete File: "+fileName+ " from " + remoteDirectory + ". Message: " + ftp.getReplyString());
+					log.error(messageOut);
+				} else {
+					log.info(messageOut);
 				}
 			} else {
-				log.error("FTP server unable to delete File: "+fileName+ " from " + remoteDirectory + ". Message: " + ftp.getReplyString());
+				log.error("FTP server rename binary File: from " + orgFileName + " to "  +newFileName + " in dir " + remoteDirectory + ". Message: " + ftp.getReplyString());
 			}
         } catch(IOException ioe) {
             log.error(ioe.getMessage(), ioe);
