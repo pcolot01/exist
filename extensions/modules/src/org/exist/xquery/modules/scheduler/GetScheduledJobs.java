@@ -163,7 +163,7 @@ public class GetScheduledJobs extends BasicFunction
                         Date nextTime = scheduledJobs.get(j).getNextFireTime();
 
                         if( nextTime != null ) {
-                            xmlBuf.append( new DateTimeValue() );
+                            xmlBuf.append( new DateTimeValue(nextTime) );
                         }
 
                         xmlBuf.append( "</next>" );
@@ -195,6 +195,9 @@ public class GetScheduledJobs extends BasicFunction
             throw new XPathException(this, se.getMessage(), se);
         } catch(IOException ioe) {
             throw new XPathException(this, ioe.getMessage(), ioe);
-        }
+        } catch (Exception e ) {
+			LOG.error(e.getMessage());
+			throw new XPathException(this, e.getMessage(), e);
+		}
     }
 }
